@@ -76,6 +76,10 @@ func _ready() -> void:
 	if gun_holder:
 		original_gun_pos = gun_holder.position
 	emit_signal("ammo_changed", current_ammo, reserve_ammo)
+	# Tell the raycast to IGNORE the player's own body.
+	# Without this, every bullet hits your own capsule collider instantly!
+	if raycast:
+		raycast.add_exception(self)
 	# Defer mouse capture so the OS window is fully focused before locking
 	call_deferred("_capture_mouse")
 
