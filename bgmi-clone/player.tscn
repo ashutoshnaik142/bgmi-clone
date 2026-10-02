@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://b28ajq1n4cdis"]
+
+[ext_resource type="Script" uid="uid://bh02j618u0jfk" path="res://player.gd" id="1_4flbx"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kvphi"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_ns5g1"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ns5g1"]
+size = Vector3(0.1, 0.15, 0.7)
+
+[node name="Player" type="CharacterBody3D" unique_id=655519330]
+script = ExtResource("1_4flbx")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2011692249]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_kvphi")
+
+[node name="Bodymesh" type="MeshInstance3D" parent="." unique_id=1263490841]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+mesh = SubResource("CapsuleMesh_ns5g1")
+
+[node name="CameraPivot" type="Node3D" parent="." unique_id=1757298542]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraPivot" unique_id=579004327]
+transform = Transform3D(1, 0, 0, 0, 0.9848077, 0.17364818, 0, -0.17364818, 0.9848077, 0, 0, 0)
+spring_length = 3.0
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot/SpringArm3D" unique_id=1880841148]
+current = true
+
+[node name="RayCast3D" type="RayCast3D" parent="CameraPivot/SpringArm3D/Camera3D" unique_id=1548757657]
+target_position = Vector3(0, 0, -100)
+
+[node name="gun" type="Node3D" parent="." unique_id=1437989948]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4, 1.1, -0.44)
+
+[node name="gunmesh" type="MeshInstance3D" parent="gun" unique_id=1981492327]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.35)
+mesh = SubResource("BoxMesh_ns5g1")
+
+[node name="muzzle" type="Marker3D" parent="gun" unique_id=199241748]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7)

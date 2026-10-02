@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://dq2iek46nvno2"]
+
+[node name="HUD" type="CanvasLayer" unique_id=295532222]
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1858462570]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 40.0
+grow_vertical = 0
+offset_transform_enabled = true
+offset_transform_position = Vector2(30, -30)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1437202095]
+layout_mode = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="MarginContainer/VBoxContainer" unique_id=1183307303]
+custom_minimum_size = Vector2(250, 20)
+layout_mode = 2
+value = 100.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=987700773]
+layout_mode = 2
+text = "HP: 100/100"
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1376268823]
+offset_right = 1158.0
+offset_bottom = 653.0
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="CenterContainer" unique_id=590608609]
+custom_minimum_size = Vector2(6, 6)
+layout_mode = 2
+
+[node name="Ammo Label" type="Label" parent="." unique_id=840073817]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -23.0
+grow_horizontal = 0
+grow_vertical = 0
+offset_transform_enabled = true
+offset_transform_position = Vector2(-50, -40)
+theme_override_font_sizes/font_size = 35
+text = "30/120"

@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://cdl3g0owee4ul"]
+
+[ext_resource type="PackedScene" uid="uid://b28ajq1n4cdis" path="res://player.tscn" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://dq2iek46nvno2" path="res://hud.tscn" id="2_0xm2m"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ns5g1"]
+size = Vector3(100, 1, 100)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ns5g1"]
+size = Vector3(100, 1, 100)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6td3r"]
+size = Vector3(8, 12, 8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6td3r"]
+size = Vector3(8, 12, 8)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2qpxq"]
+
+[sub_resource type="Sky" id="Sky_6td3r"]
+sky_material = SubResource("ProceduralSkyMaterial_2qpxq")
+
+[sub_resource type="Environment" id="Environment_ns5g1"]
+background_mode = 2
+sky = SubResource("Sky_6td3r")
+
+[node name="main" type="Node3D" unique_id=1044599959]
+
+[node name="Ground" type="StaticBody3D" parent="." unique_id=2128126524]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground" unique_id=439152508]
+shape = SubResource("BoxShape3D_ns5g1")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground" unique_id=1094921677]
+mesh = SubResource("BoxMesh_ns5g1")
+
+[node name="tower" type="StaticBody3D" parent="." unique_id=852477667]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, -15)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="tower" unique_id=288191654]
+shape = SubResource("BoxShape3D_6td3r")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="tower" unique_id=2119307411]
+mesh = SubResource("BoxMesh_6td3r")
+
+[node name="sun" type="DirectionalLight3D" parent="." unique_id=1635210813]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, -0.3132515, 0, -0.19108212)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2141024774]
+environment = SubResource("Environment_ns5g1")
+
+[node name="Player" parent="." unique_id=655519330 instance=ExtResource("1_ig7tw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.381, 3, -0.745)
+
+[node name="HUD" parent="." unique_id=781732441 instance=ExtResource("2_0xm2m")]
