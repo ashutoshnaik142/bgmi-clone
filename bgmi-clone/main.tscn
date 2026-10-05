@@ -97,7 +97,7 @@ environment = SubResource("Environment_ns5g1")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.381, 3, -0.745)
 
 [node name="bot" parent="." unique_id=1247665696 groups=["bots"] instance=ExtResource("3_h2yge")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 2, -8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 2, -8)
 
 [node name="HUD" parent="." unique_id=295532222 groups=["hud"] instance=ExtResource("2_0xm2m")]
 
@@ -137,13 +137,13 @@ script = ExtResource("5_272bh")
 metadata/_edit_lock_ = true
 
 [node name="bot2" parent="." unique_id=110622926 groups=["bots"] instance=ExtResource("3_h2yge")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 2, 8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 2, 8)
 
 [node name="bot3" parent="." unique_id=217478305 groups=["bots"] instance=ExtResource("3_h2yge")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -22)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -50)
 
 [node name="bot4" parent="." unique_id=318491029 groups=["bots"] instance=ExtResource("3_h2yge")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 2, 22)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 2, 22)
 
 [node name="MatchManager" type="Node" parent="." unique_id=1981218360]
 script = ExtResource("4_1bvp3")

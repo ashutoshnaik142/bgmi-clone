@@ -20,14 +20,13 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	time_passed += delta
-	# Floating bobbing and continuous spinning animation
 	rotate_y(delta * 2.0)
 	position.y = base_y + sin(time_passed * 3.0) * 0.12
 
 func _setup_visuals() -> void:
 	var mat = StandardMaterial3D.new()
 	if pickup_type == Type.HEALTH:
-		mat.albedo_color = Color(0.1, 0.9, 0.3) # Bright Medical Green
+		mat.albedo_color = Color(0.1, 0.9, 0.3)
 		mat.emission_enabled = true
 		mat.emission = Color(0.1, 0.9, 0.3)
 		mat.emission_energy_multiplier = 0.6
@@ -37,7 +36,7 @@ func _setup_visuals() -> void:
 		if light:
 			light.light_color = Color(0.1, 0.9, 0.3)
 	else:
-		mat.albedo_color = Color(1.0, 0.75, 0.1) # Ammo Brass Gold
+		mat.albedo_color = Color(1.0, 0.75, 0.1)
 		mat.emission_enabled = true
 		mat.emission = Color(1.0, 0.75, 0.1)
 		mat.emission_energy_multiplier = 0.6
@@ -63,7 +62,6 @@ func _on_body_entered(body: Node3D) -> void:
 			picked_up = body.add_ammo(int(amount))
 
 	if picked_up:
-		# Play audio on player
 		if body.has_method("play_sfx") and body.get("sfx_reload"):
 			body.play_sfx(body.get("sfx_reload"), 0.1)
 		queue_free()

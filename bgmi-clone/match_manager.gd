@@ -12,12 +12,10 @@ var hud: CanvasLayer = null
 
 func _ready() -> void:
 	current_timer = match_duration_seconds
-	
-	# Wait for scene tree to stabilize
+
 	await get_tree().process_frame
 	await get_tree().process_frame
-	
-	# Locate HUD node safely
+
 	hud = get_node_or_null("/root/main/HUD")
 	if not hud:
 		var huds = get_tree().get_nodes_in_group("hud")
@@ -39,11 +37,10 @@ func _process(delta: float) -> void:
 
 func start_match() -> void:
 	is_match_active = true
-	
-	# Safely handle spawning only if markers are assigned
+
 	if spawn_points.size() > 0 and bot_scene != null:
 		_spawn_all_participants()
-		
+
 	_update_alive_count()
 
 func _spawn_all_participants() -> void:
@@ -78,7 +75,7 @@ func _update_alive_count() -> void:
 	var bots = get_tree().get_nodes_in_group("bots")
 	var players = get_tree().get_nodes_in_group("player")
 	var total_alive = bots.size() + players.size()
-	
+
 	if hud and hud.has_method("update_alive_ui"):
 		hud.update_alive_ui(total_alive)
 
@@ -90,13 +87,11 @@ func end_match(result_message: String) -> void:
 		return
 
 	is_match_active = false
-	
-	# Unlock mouse cursor so restart button can be clicked
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	
+
 	if hud and hud.has_method("show_match_end_screen"):
 		hud.show_match_end_screen(result_message)
-	
+
 	match_ended.emit(result_message)
 
 func restart_match() -> void:

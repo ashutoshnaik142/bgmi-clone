@@ -1,10 +1,8 @@
 class_name Bot
 extends CharacterBody3D
 
-## Bot States
 enum State { PATROL, CHASE, ATTACK, DEAD }
 
-## Exported Stats & Settings
 @export_group("Stats")
 @export var max_health: float = 100.0
 @export var move_speed: float = 3.5
@@ -14,14 +12,12 @@ enum State { PATROL, CHASE, ATTACK, DEAD }
 @export var detection_range: float = 20.0
 @export var attack_range: float = 12.0
 @export var attack_damage: float = 10.0
-@export var fire_rate: float = 0.8  # Seconds between shots
+@export var fire_rate: float = 0.8
 
-## Node References
 @onready var nav_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var shoot_ray: RayCast3D = $ShootRay
 @onready var body_mesh: MeshInstance3D = $Bodymesh
 
-## Runtime State Variables
 var current_health: float
 var current_state: State = State.PATROL
 var player: Player = null
@@ -33,7 +29,6 @@ const PATROL_RADIUS: float = 12.0
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
 
-## Animation
 var anim_player: AnimationPlayer = null
 var is_crouching: bool = false
 var audio_gun: AudioStreamPlayer3D = null
@@ -43,11 +38,11 @@ func _ready() -> void:
 	add_to_group("bots")
 	current_health = max_health
 	spawn_position = global_position
-	
+
 	if shoot_ray:
 		shoot_ray.add_exception(self)
-	
-	# Setup audio for bot gunfire
+
+	# Setup 3D audio for bot gunfire
 	audio_gun = AudioStreamPlayer3D.new()
 	audio_gun.name = "BotGunAudio"
 	audio_gun.max_distance = 60.0
@@ -55,13 +50,10 @@ func _ready() -> void:
 	if ResourceLoader.exists("res://audio/gunshot.wav"):
 		sfx_gunshot = load("res://audio/gunshot.wav")
 
-	# Setup Mixamo animations (Idle, Run, Crouch)
 	_setup_animations()
-	
-	# Wait one physics frame for NavigationServer3D sync
+
 	await get_tree().physics_frame
-	
-	# Find player via "player" group
+
 	var players = get_tree().get_nodes_in_group("player")
 	if players.size() > 0:
 		player = players[0] as Player
@@ -69,7 +61,6 @@ func _ready() -> void:
 	_set_random_patrol_target()
 
 func _physics_process(delta: float) -> void:
-	# Apply gravity
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
@@ -77,7 +68,6 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 
-	# Backup search if player reference was missing on ready
 	if not is_instance_valid(player):
 		var players = get_tree().get_nodes_in_group("player")
 		if players.size() > 0:
@@ -92,6 +82,7 @@ func _physics_process(delta: float) -> void:
 	_update_animations()
 
 # ─── STATE LOGIC ──────────────────────────────────────────────────────────────
+
 func _tick_patrol(delta: float) -> void:
 	is_crouching = false
 	patrol_timer -= delta
@@ -100,7 +91,6 @@ func _tick_patrol(delta: float) -> void:
 
 	_move_along_nav_path(move_speed)
 
-	# Check player distance to enter CHASE
 	if is_instance_valid(player):
 		var dist = global_position.distance_to(player.global_position)
 		if dist <= detection_range:
@@ -115,7 +105,6 @@ func _tick_chase(delta: float) -> void:
 	nav_agent.target_position = player.global_position
 	var dist = global_position.distance_to(player.global_position)
 
-	# Only attack if close enough AND has a clear line of sight (not blocked by a box/wall)
 	if dist <= attack_range and _has_line_of_sight():
 		current_state = State.ATTACK
 		return
@@ -123,7 +112,6 @@ func _tick_chase(delta: float) -> void:
 		current_state = State.PATROL
 		return
 
-	# Keep moving along NavMesh path to hunt/flank the player
 	_move_along_nav_path(chase_speed)
 
 func _tick_attack(delta: float) -> void:
@@ -131,17 +119,13 @@ func _tick_attack(delta: float) -> void:
 		current_state = State.PATROL
 		return
 
-	# CRITICAL FIX: If player ducks behind a box or wall, STOP shooting the obstacle!
-	# Immediately switch back to CHASE so the bot navigates around cover to flank you!
 	if not _has_line_of_sight():
 		current_state = State.CHASE
 		return
 
-	# Stop moving while shooting
 	velocity.x = 0.0
 	velocity.z = 0.0
 
-	# Smoothly rotate toward player
 	_look_at_position(player.global_position)
 
 	var dist = global_position.distance_to(player.global_position)
@@ -149,32 +133,30 @@ func _tick_attack(delta: float) -> void:
 		current_state = State.CHASE
 		return
 
-	# Tactical crouch: crouch while firing from medium distance (> 4m)
 	is_crouching = dist > 4.0
 
-	# Fire rate cooldown
 	shoot_timer -= delta
 	if shoot_timer <= 0.0:
 		_shoot()
 		shoot_timer = fire_rate
 
-# ─── LINE OF SIGHT (LOS) DETECTION ────────────────────────────────────────────
+# ─── LINE OF SIGHT ────────────────────────────────────────────────────────────
+
 func _has_line_of_sight() -> bool:
 	if not is_instance_valid(player) or not shoot_ray:
 		return false
 
-	# Aim raycast from bot chest towards player chest
 	var aim_target = player.global_position + Vector3(0, 1.0, 0)
 	shoot_ray.target_position = shoot_ray.to_local(aim_target)
 	shoot_ray.force_raycast_update()
 
 	if shoot_ray.is_colliding():
 		var collider = shoot_ray.get_collider()
-		# Line of sight is only clear if the ray directly hits the player (NOT a box or wall)
 		return collider == player or (collider and collider.is_in_group("player"))
 	return false
 
-# ─── MOVEMENT & HELPERS ───────────────────────────────────────────────────────
+# ─── MOVEMENT ─────────────────────────────────────────────────────────────────
+
 func _move_along_nav_path(speed: float) -> void:
 	if nav_agent.is_navigation_finished():
 		velocity.x = 0.0
@@ -212,18 +194,17 @@ func _set_random_patrol_target() -> void:
 	)
 
 # ─── COMBAT & DAMAGE ──────────────────────────────────────────────────────────
+
 func _shoot() -> void:
 	if not is_instance_valid(player) or not shoot_ray:
 		return
 
-	# Play 3D gunfire sound
 	if audio_gun and sfx_gunshot:
 		audio_gun.stream = sfx_gunshot
 		audio_gun.pitch_scale = randf_range(0.85, 0.95)
 		audio_gun.volume_db = 0.0
 		audio_gun.play()
 
-	# Aim raycast towards player chest center
 	var aim_target = player.global_position + Vector3(0, 1.0, 0)
 	shoot_ray.target_position = shoot_ray.to_local(aim_target)
 	shoot_ray.force_raycast_update()
@@ -232,18 +213,14 @@ func _shoot() -> void:
 		var collider = shoot_ray.get_collider()
 		if collider.has_method("take_damage"):
 			collider.take_damage(attack_damage)
-		print("[Bot] 🔫 Fired shot hit: ", collider.name)
 
-# ─── SOUND PERCEPTION ─────────────────────────────────────────────────────────
 func hear_sound(source_pos: Vector3, is_gunshot: bool) -> void:
 	if current_state == State.DEAD:
 		return
 
-	# If already actively shooting the player with direct line of sight, stay locked in
 	if current_state == State.ATTACK and _has_line_of_sight():
 		return
 
-	print("[Bot %s] 👂 Heard %s! Investigating location..." % [name, "gunshot" if is_gunshot else "footsteps"])
 	current_state = State.CHASE
 	nav_agent.target_position = source_pos
 	_look_at_position(source_pos)
@@ -253,9 +230,7 @@ func take_damage(amount: float) -> void:
 		return
 
 	current_health -= amount
-	print("[Bot] Hit for %.0f dmg. Remaining HP: %.0f/%.0f" % [amount, current_health, max_health])
 
-	# Flash white/red on hit if material supports it
 	if body_mesh and body_mesh.get_surface_override_material(0):
 		var mat = body_mesh.get_surface_override_material(0) as StandardMaterial3D
 		if mat:
@@ -271,22 +246,20 @@ func take_damage(amount: float) -> void:
 func die() -> void:
 	current_state = State.DEAD
 	velocity = Vector3.ZERO
-	remove_from_group("bots") # Immediately decrement alive count
+	remove_from_group("bots")
 
-	# Tip over realistically on death
 	var tween = create_tween()
 	tween.tween_property(self, "rotation:z", deg_to_rad(90.0), 0.25)
 
-	# Spawn Loot Drop (Medkit or Ammo)
+	# Drop loot on death
 	if ResourceLoader.exists("res://pickup.tscn"):
 		var pickup_scene = load("res://pickup.tscn")
 		var drop = pickup_scene.instantiate()
-		drop.pickup_type = 1 if randf() > 0.5 else 0 # 1 = AMMO, 0 = HEALTH
+		drop.pickup_type = 1 if randf() > 0.5 else 0
 		drop.amount = 60.0 if drop.pickup_type == 1 else 50.0
 		get_parent().add_child(drop)
 		drop.global_position = global_position + Vector3(0, 0.4, 0)
 
-	# Tell MatchManager this bot died BEFORE deleting it
 	var match_mgr = get_node_or_null("/root/main/MatchManager")
 	if match_mgr and match_mgr.has_method("notify_participant_eliminated"):
 		match_mgr.notify_participant_eliminated(name, false)
@@ -298,7 +271,8 @@ func die() -> void:
 	await get_tree().create_timer(3.0).timeout
 	queue_free()
 
-# ─── ANIMATION SYSTEM ─────────────────────────────────────────────────────────
+# ─── ANIMATIONS ───────────────────────────────────────────────────────────────
+
 func _setup_animations() -> void:
 	var ap_list = find_children("*", "AnimationPlayer", true, false)
 	if ap_list.size() > 0:
@@ -307,7 +281,6 @@ func _setup_animations() -> void:
 	if not anim_player:
 		return
 
-	# Set default Idle animation to loop
 	var anim_list = anim_player.get_animation_list()
 	for anim_name in anim_list:
 		if anim_name != "RESET":
@@ -317,7 +290,6 @@ func _setup_animations() -> void:
 			anim_player.play(anim_name)
 			break
 
-	# Import external animations if available
 	_import_anim_from_fbx(["res://Idle Crouching.fbx", "res://Rifle_Crouch.fbx", "res://Crouch_Idle.fbx"], "crouch_idle")
 	_import_anim_from_fbx(["res://Crouched Run.fbx", "res://Crouch_Walk.fbx"], "crouch_run")
 	_import_anim_from_fbx(["res://Rifle Run.fbx", "res://Run.fbx"], "run")
@@ -337,7 +309,6 @@ func _import_anim_from_fbx(candidate_paths: Array, target_anim_name: String) -> 
 							var lib = anim_player.get_animation_library("")
 							if lib and not lib.has_animation(target_anim_name):
 								lib.add_animation(target_anim_name, anim)
-								print("[Bot] ✅ Loaded '%s' from %s!" % [target_anim_name, path])
 						break
 			scene.queue_free()
 			break

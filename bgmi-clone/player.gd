@@ -1,12 +1,10 @@
 class_name Player
 extends CharacterBody3D
 
-## Signals for UI / HUD
 signal health_changed(current_hp: float, max_hp: float)
 signal ammo_changed(current: int, reserve: int)
 signal state_changed(new_state: String)
 
-## Movement Speeds (m/s)
 @export_group("Locomotion")
 @export var walk_speed: float = 5.0
 @export var sprint_speed: float = 8.5
@@ -15,28 +13,25 @@ signal state_changed(new_state: String)
 @export var acceleration: float = 10.0
 @export var friction: float = 12.0
 
-## Camera Look
 @export_group("Camera")
 @export var mouse_sensitivity: float = 0.0025
 @export var min_pitch: float = deg_to_rad(-80.0)
 @export var max_pitch: float = deg_to_rad(60.0)
 
-## Fall Damage & Health
 @export_group("Health & Damage")
 @export var max_health: float = 100.0
-@export var safe_fall_speed: float = 11.0 # Fall velocity threshold before taking damage
+@export var safe_fall_speed: float = 11.0
 @export var fall_damage_multiplier: float = 7.5
 
-## Weapon Parameters
 @export_group("Weapon Stats")
 @export var damage: float = 35.0
-@export var fire_rate: float = 0.12 # Seconds between shots (Auto-rifle)
+@export var fire_rate: float = 0.12
 @export var max_ammo: int = 30
 @export var max_reserve_ammo: int = 90
 @export var reload_time: float = 1.8
-@export var recoil_amount: float = 0.025 # Camera kick (radians)
+@export var recoil_amount: float = 0.025
 
-## Node References
+# Node refs
 @onready var camera_pivot: Node3D = $CameraPivot
 @onready var spring_arm: SpringArm3D = $CameraPivot/SpringArm3D
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
@@ -44,7 +39,6 @@ signal state_changed(new_state: String)
 @onready var raycast: RayCast3D = $CameraPivot/SpringArm3D/Camera3D/RayCast3D
 @onready var gun_holder: Node3D = $gun
 @onready var muzzle: Marker3D = $gun/muzzle
-
 @onready var audio: AudioStreamPlayer3D = $AudioStreamPlayer3D
 
 var sfx_gunshot := preload("res://audio/gunshot.wav")
@@ -54,24 +48,20 @@ var sfx_footstep := preload("res://audio/footstep.wav")
 var sfx_reload := preload("res://audio/reload.wav")
 var footstep_timer: float = 0.0
 
-
-## Runtime States
+# State
 var current_health: float = 100.0
 var current_ammo: int = 30
 var reserve_ammo: int = 90
-
 var is_dead: bool = false
 var is_crouching: bool = false
 var is_sprinting: bool = false
 var is_reloading: bool = false
-
 var current_state: String = "IDLE"
 var was_in_air: bool = false
 var shoot_timer: float = 0.0
 var original_gun_pos: Vector3
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
 
-# Heights for smooth crouching
 const STANDING_HEIGHT: float = 1.8
 const CROUCHING_HEIGHT: float = 1.1
 const STANDING_PIVOT_Y: float = 1.5
@@ -85,14 +75,10 @@ func _ready() -> void:
 	if gun_holder:
 		original_gun_pos = gun_holder.position
 
-	# Setup Mixamo Animations (Idle + Run)
 	_setup_animations()
-	
-	# Initialize HUD UI values via signals
 	emit_signal("health_changed", current_health, max_health)
 	emit_signal("ammo_changed", current_ammo, reserve_ammo)
 
-	# Exclude self from shooting raycasts
 	if raycast:
 		raycast.add_exception(self)
 
@@ -102,7 +88,6 @@ func _capture_mouse() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _input(event: InputEvent) -> void:
-	# Click window to re-capture cursor (only when match is active and EndScreen is NOT showing)
 	if event is InputEventMouseButton and event.pressed:
 		if is_dead:
 			return
@@ -113,7 +98,6 @@ func _input(event: InputEvent) -> void:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 			return
 
-	# Escape key toggles cursor release
 	if event is InputEventKey and event.physical_keycode == KEY_ESCAPE and event.pressed:
 		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -121,7 +105,6 @@ func _input(event: InputEvent) -> void:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		return
 
-	# Camera Control
 	if is_dead:
 		return
 
@@ -150,7 +133,8 @@ func _physics_process(delta: float) -> void:
 	_check_fall_damage(vy_before_landing)
 	_update_state()
 	_handle_weapon(delta)
-	# Animation switching: Crouch Idle, Crouch Run, Stand Run, and Stand Idle
+
+	# Animation switching
 	if anim_player:
 		var horizontal_speed := Vector2(velocity.x, velocity.z).length()
 		if is_crouching:
@@ -164,13 +148,11 @@ func _physics_process(delta: float) -> void:
 				elif anim_player.has_animation("crouch") and anim_player.current_animation != "crouch":
 					anim_player.play("crouch")
 		elif horizontal_speed > 0.5:
-			# If sprinting, speed up animation playback to 1.4x to match the faster ground speed
 			anim_player.speed_scale = 1.4 if is_sprinting else 1.0
 			if anim_player.has_animation("run") and anim_player.current_animation != "run":
 				anim_player.play("run")
 		else:
 			anim_player.speed_scale = 1.0
-			# Standing still -> Play Idle
 			var idle_anim = "mixamo.com"
 			if not anim_player.has_animation(idle_anim):
 				for a in anim_player.get_animation_list():
@@ -194,7 +176,7 @@ func _handle_gravity_and_jump(delta: float) -> void:
 
 func _handle_movement(delta: float) -> void:
 	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
-	
+
 	var speed: float = walk_speed
 	if is_crouching:
 		speed = crouch_speed
@@ -237,7 +219,7 @@ func _check_fall_damage(vy: float) -> void:
 		var impact_speed: float = abs(vy)
 		if impact_speed > safe_fall_speed:
 			var fall_dmg: float = (impact_speed - safe_fall_speed) * fall_damage_multiplier
-			take_damage(fall_dmg, "Fall Damage (Impact: %.1f m/s)" % impact_speed)
+			take_damage(fall_dmg, "Fall")
 		was_in_air = false
 
 func _update_state() -> void:
@@ -272,23 +254,20 @@ func _handle_weapon(delta: float) -> void:
 				reload()
 			else:
 				play_sfx(sfx_empty, 0.05)
-				shoot_timer = 0.3 # Cooldown to avoid sound spam on empty clip
+				shoot_timer = 0.3
 
 func shoot() -> void:
 	shoot_timer = fire_rate
 	current_ammo -= 1
-	print("[DEBUG] Shot fired! current_ammo = ", current_ammo) # Debug line
 	play_sfx(sfx_gunshot, 0.08)
-	_emit_sound(55.0, true) # Alert all bots within 55m of gunfire
+	_emit_sound(55.0, true)
 
-	# Direct HUD call
 	var huds = get_tree().get_nodes_in_group("hud")
 	if huds.size() > 0 and huds[0].has_method("update_ammo_ui"):
 		huds[0].update_ammo_ui(current_ammo, reserve_ammo)
 	elif owner and owner.has_node("HUD"):
 		owner.get_node("HUD").update_ammo_ui(current_ammo, reserve_ammo)
 
-	# Visual Kickback & Recoil
 	if gun_holder:
 		var tween = create_tween()
 		tween.tween_property(gun_holder, "position:z", original_gun_pos.z + 0.06, 0.03)
@@ -296,7 +275,6 @@ func shoot() -> void:
 
 	camera_pivot.rotation.x = clamp(camera_pivot.rotation.x + recoil_amount, min_pitch, max_pitch)
 
-	# Raycast Hit Detection
 	if raycast and raycast.is_colliding():
 		var hit_target = raycast.get_collider()
 		if hit_target.has_method("take_damage"):
@@ -308,15 +286,14 @@ func reload() -> void:
 		return
 
 	is_reloading = true
-	print("[Gun] 🔄 Reloading...")
 	play_sfx(sfx_reload, 0.05)
 	if gun_holder:
 		var tween = create_tween()
 		tween.tween_property(gun_holder, "position:y", original_gun_pos.y - 0.2, 0.3)
 		tween.tween_property(gun_holder, "rotation:z", deg_to_rad(-25.0), 0.3)
-		
+
 		await get_tree().create_timer(reload_time).timeout
-		
+
 		var tween_return = create_tween().set_parallel(true)
 		tween_return.tween_property(gun_holder, "position:y", original_gun_pos.y, 0.2)
 		tween_return.tween_property(gun_holder, "rotation:z", 0.0, 0.2)
@@ -330,9 +307,9 @@ func reload() -> void:
 	is_reloading = false
 
 	emit_signal("ammo_changed", current_ammo, reserve_ammo)
-	print("[Gun] ✅ Reload Complete! Ammo: %d/%d" % [current_ammo, reserve_ammo])
 
-# ─── FOOTSTEPS & SOUND PROPAGATION ───────────────────────────────────────────
+# ─── FOOTSTEPS & SOUND ────────────────────────────────────────────────────────
+
 func _handle_footsteps(delta: float) -> void:
 	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
 	if is_on_floor() and horizontal_speed > 0.5:
@@ -347,21 +324,21 @@ func _handle_footsteps(delta: float) -> void:
 func _play_footstep() -> void:
 	if not audio or not sfx_footstep:
 		return
-	
+
 	var sound_radius := 10.0
 	if is_crouching:
 		audio.volume_db = -18.0
 		audio.pitch_scale = 0.85
-		sound_radius = 2.5 # Sneaky stealth
+		sound_radius = 2.5
 	elif is_sprinting:
 		audio.volume_db = 0.0
 		audio.pitch_scale = randf_range(1.05, 1.15)
-		sound_radius = 22.0 # Loud running steps
+		sound_radius = 22.0
 	else:
 		audio.volume_db = -6.0
 		audio.pitch_scale = randf_range(0.95, 1.05)
-		sound_radius = 10.0 # Normal walking
-	
+		sound_radius = 10.0
+
 	audio.stream = sfx_footstep
 	audio.play()
 	_emit_sound(sound_radius, false)
@@ -373,13 +350,13 @@ func _emit_sound(radius: float, is_gunshot: bool) -> void:
 			if global_position.distance_to(b.global_position) <= radius:
 				b.hear_sound(global_position, is_gunshot)
 
-# ─── LOOT & INVENTORY HELPERS ────────────────────────────────────────────────
+# ─── LOOT HELPERS ─────────────────────────────────────────────────────────────
+
 func heal(amount: float) -> bool:
 	if current_health >= max_health:
 		return false
 	current_health = clamp(current_health + amount, 0.0, max_health)
 	emit_signal("health_changed", current_health, max_health)
-	print("[Player] 💊 Healed +%.0f HP! (HP: %.0f/%.0f)" % [amount, current_health, max_health])
 	return true
 
 func add_ammo(amount: int) -> bool:
@@ -387,7 +364,6 @@ func add_ammo(amount: int) -> bool:
 		return false
 	reserve_ammo = clamp(reserve_ammo + amount, 0, max_reserve_ammo)
 	emit_signal("ammo_changed", current_ammo, reserve_ammo)
-	print("[Player] 🎒 Picked up +%d Ammo! (Reserve: %d)" % [amount, reserve_ammo])
 	return true
 
 # ─── HEALTH & DAMAGE ──────────────────────────────────────────────────────────
@@ -397,8 +373,6 @@ func take_damage(amount: float, source: String = "Enemy") -> void:
 		return
 
 	current_health = clamp(current_health - amount, 0.0, max_health)
-	print("[Player] -%.1f HP from %s. (Current HP: %.1f/%.1f)" % [amount, source, current_health, max_health])
-	
 	emit_signal("health_changed", current_health, max_health)
 
 	if current_health <= 0.0:
@@ -410,17 +384,16 @@ func die() -> void:
 
 	is_dead = true
 	remove_from_group("player")
-	print("[Player] 💀 DIED!")
 
 	var match_mgr = get_node_or_null("/root/main/MatchManager")
 	if match_mgr:
 		match_mgr.notify_participant_eliminated("Player", true)
 
 	queue_free()
+
 var anim_player: AnimationPlayer = null
 
 func _setup_animations() -> void:
-	# Find the character's AnimationPlayer
 	var ap_list = find_children("*", "AnimationPlayer", true, false)
 	if ap_list.size() > 0:
 		anim_player = ap_list[0] as AnimationPlayer
@@ -428,7 +401,6 @@ func _setup_animations() -> void:
 	if not anim_player:
 		return
 
-	# Set the default Idle animation to loop
 	var anim_list = anim_player.get_animation_list()
 	for anim_name in anim_list:
 		if anim_name != "RESET":
@@ -437,7 +409,7 @@ func _setup_animations() -> void:
 				idle_anim.loop_mode = Animation.LOOP_LINEAR
 			anim_player.play(anim_name)
 			break
-	# Automatically extract external animations from Mixamo FBX files
+
 	_import_anim_from_fbx(["res://Idle Crouching.fbx", "res://Rifle_Crouch.fbx", "res://Crouch_Idle.fbx", "res://Crouch.fbx"], "crouch_idle")
 	_import_anim_from_fbx(["res://Crouched Run.fbx", "res://Crouch_Walk.fbx"], "crouch_run")
 	_import_anim_from_fbx(["res://Rifle Run.fbx", "res://Run.fbx"], "run")
@@ -457,7 +429,6 @@ func _import_anim_from_fbx(candidate_paths: Array, target_anim_name: String) -> 
 							var lib = anim_player.get_animation_library("")
 							if lib and not lib.has_animation(target_anim_name):
 								lib.add_animation(target_anim_name, anim)
-								print("[Player] ✅ Successfully loaded '%s' from %s!" % [target_anim_name, path])
 						break
 			scene.queue_free()
 			break

@@ -14,13 +14,12 @@ func _ready() -> void:
 	add_to_group("hud")
 	if end_screen:
 		end_screen.hide()
-	
+
 	if restart_button:
 		restart_button.pressed.connect(_on_restart_pressed)
 
 	await get_tree().process_frame
-	
-	# Connect player health and ammo signals
+
 	var players = get_tree().get_nodes_in_group("player")
 	if players.size() > 0:
 		var player_node = players[0]
