@@ -2,18 +2,13 @@
 
 [ext_resource type="PackedScene" uid="uid://b28ajq1n4cdis" path="res://player.tscn" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://dq2iek46nvno2" path="res://hud.tscn" id="2_0xm2m"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_ns5g1"]
-size = Vector3(100, 1, 100)
-
-[sub_resource type="BoxMesh" id="BoxMesh_ns5g1"]
-size = Vector3(100, 1, 100)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_6td3r"]
-size = Vector3(8, 12, 8)
-
-[sub_resource type="BoxMesh" id="BoxMesh_6td3r"]
-size = Vector3(8, 12, 8)
+[ext_resource type="PackedScene" uid="uid://c2ewbnm5bsaa6" path="res://bot.tscn" id="3_h2yge"]
+[ext_resource type="Script" uid="uid://8bb4a1whxvtv" path="res://match_manager.gd" id="4_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://bcq3f6hm5subv" path="res://lowpoly__fps__tdm__game__map_by_resoforge/scene.gltf" id="4_5vw27"]
+[ext_resource type="Terrain3DAssets" uid="uid://b43h61b8568hl" path="res://terrain_3d_assets.tres" id="4_7mycd"]
+[ext_resource type="Texture2D" uid="uid://ddprscrpsofah" path="res://demo/assets/textures/ground037_alb_ht.png" id="4_272bh"]
+[ext_resource type="Script" uid="uid://dg3iv5ukvw58q" path="res://terrain_3d.gd" id="5_272bh"]
+[ext_resource type="Script" uid="uid://8igos4fvdd8i" path="res://main.gd" id="6_main"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2qpxq"]
 
@@ -24,24 +19,73 @@ sky_material = SubResource("ProceduralSkyMaterial_2qpxq")
 background_mode = 2
 sky = SubResource("Sky_6td3r")
 
+[sub_resource type="NavigationMesh" id="NavigationMesh_n8o8f"]
+vertices = PackedVector3Array(-4.5, 0.6999998, -19.25, -2.25, 0.6999998, -19.5, -2.25, 0.6999998, -99.5, -99.5, 0.6999998, -99.5, -99.5, 0.6999998, -17.25, -4.5, 0.6999998, -17.25, 2.5, 0.6999998, -19.5, 2.5, 0.6999998, -99.5, 4.5, 0.6999998, -19.5, 4.75, 0.6999998, -17.75, 99.5, 0.6999998, -18, 99.5, 0.6999998, -99.5, -3.5, 6.2000003, -18.5, -3.5, 6.2000003, -11.25, 3.75, 6.2000003, -11.25, 3.75, 6.2000003, -18.5, -3.25, 0.6999998, -18.25, -3.25, 0.6999998, -11.5, 3.5, 0.6999998, -11.5, 3.5, 0.6999998, -18.25, 4.75, 0.6999998, -12.25, 99.5, 0.6999998, -12, -99.5, 0.6999998, -12.5, -4.5, 0.6999998, -12.5, -4.5, 0.6999998, -10.5, -2.75, 0.6999998, -10.25, -99.5, 0.6999998, 99.5, -3, 0.6999998, 99.5, 4.75, 0.6999998, -10.75, 4.25, 0.6999998, -10.25, 3, 0.6999998, 99.5, 99.5, 0.6999998, 99.5, 2.75, 0.6999998, -10.25)
+polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 3), PackedInt32Array(3, 0, 4), PackedInt32Array(0, 5, 4), PackedInt32Array(2, 7, 1), PackedInt32Array(1, 7, 6), PackedInt32Array(8, 6, 7), PackedInt32Array(8, 7, 9), PackedInt32Array(9, 7, 10), PackedInt32Array(10, 7, 11), PackedInt32Array(15, 14, 12), PackedInt32Array(12, 14, 13), PackedInt32Array(19, 18, 16), PackedInt32Array(16, 18, 17), PackedInt32Array(9, 10, 20), PackedInt32Array(20, 10, 21), PackedInt32Array(4, 5, 22), PackedInt32Array(22, 5, 23), PackedInt32Array(22, 23, 24), PackedInt32Array(24, 25, 22), PackedInt32Array(22, 25, 27), PackedInt32Array(22, 27, 26), PackedInt32Array(28, 20, 21), PackedInt32Array(28, 21, 29), PackedInt32Array(29, 21, 31), PackedInt32Array(29, 31, 30), PackedInt32Array(30, 32, 29), PackedInt32Array(25, 32, 27), PackedInt32Array(27, 32, 30)]
+cell_height = 0.1
+agent_height = 1.8
+agent_max_climb = 0.5
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6td3r"]
+size = Vector3(8, 12, 8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6td3r"]
+size = Vector3(8, 12, 8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ns5g1"]
+size = Vector3(150, 1, 210)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ns5g1"]
+size = Vector3(200, 1, 200)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dg77c"]
+albedo_texture = ExtResource("4_272bh")
+uv1_scale = Vector3(50, 50, 50)
+
+[sub_resource type="Gradient" id="Gradient_5vw27"]
+offsets = PackedFloat32Array(0.2, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_kek77"]
+noise_type = 2
+frequency = 0.03
+cellular_jitter = 3.0
+cellular_return_type = 0
+domain_warp_enabled = true
+domain_warp_type = 1
+domain_warp_amplitude = 50.0
+domain_warp_fractal_type = 2
+domain_warp_fractal_lacunarity = 1.5
+domain_warp_fractal_gain = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_4c57u"]
+noise = SubResource("FastNoiseLite_kek77")
+color_ramp = SubResource("Gradient_5vw27")
+seamless = true
+
+[sub_resource type="Terrain3DMaterial" id="Terrain3DMaterial_efxa6"]
+_shader_parameters = {
+&"bias_distance": null,
+&"blend_sharpness": null,
+&"depth_blur": null,
+&"enable_macro_variation": null,
+&"enable_projection": null,
+&"flat_terrain_normals": null,
+&"macro_variation1": null,
+&"macro_variation2": null,
+&"macro_variation_slope": null,
+&"mipmap_bias": null,
+&"noise1_angle": null,
+&"noise1_offset": null,
+&"noise1_scale": null,
+&"noise2_scale": null,
+&"noise_texture": SubResource("NoiseTexture2D_4c57u"),
+&"projection_threshold": null
+}
+show_checkered = true
+
 [node name="main" type="Node3D" unique_id=1044599959]
-
-[node name="Ground" type="StaticBody3D" parent="." unique_id=2128126524]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground" unique_id=439152508]
-shape = SubResource("BoxShape3D_ns5g1")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground" unique_id=1094921677]
-mesh = SubResource("BoxMesh_ns5g1")
-
-[node name="tower" type="StaticBody3D" parent="." unique_id=852477667]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, -15)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="tower" unique_id=288191654]
-shape = SubResource("BoxShape3D_6td3r")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="tower" unique_id=2119307411]
-mesh = SubResource("BoxMesh_6td3r")
+script = ExtResource("6_main")
 
 [node name="sun" type="DirectionalLight3D" parent="." unique_id=1635210813]
 transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, -0.3132515, 0, -0.19108212)
@@ -52,4 +96,54 @@ environment = SubResource("Environment_ns5g1")
 [node name="Player" parent="." unique_id=655519330 instance=ExtResource("1_ig7tw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.381, 3, -0.745)
 
-[node name="HUD" parent="." unique_id=781732441 instance=ExtResource("2_0xm2m")]
+[node name="bot" parent="." unique_id=1247665696 groups=["bots"] instance=ExtResource("3_h2yge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 2, -8)
+
+[node name="HUD" parent="." unique_id=295532222 groups=["hud"] instance=ExtResource("2_0xm2m")]
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1679804920]
+navigation_mesh = SubResource("NavigationMesh_n8o8f")
+
+[node name="Sketchfab_Scene" parent="NavigationRegion3D" unique_id=1725768534 instance=ExtResource("4_5vw27")]
+transform = Transform3D(8, 0, 0, 0, 8, 0, 0, 0, 8, 0, 0, 0)
+
+[node name="tower" type="StaticBody3D" parent="NavigationRegion3D" unique_id=852477667]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/tower" unique_id=288191654]
+shape = SubResource("BoxShape3D_6td3r")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D/tower" unique_id=2119307411]
+mesh = SubResource("BoxMesh_6td3r")
+
+[node name="Ground" type="StaticBody3D" parent="NavigationRegion3D" unique_id=2128126524]
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Ground" unique_id=439152508]
+shape = SubResource("BoxShape3D_ns5g1")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D/Ground" unique_id=1094921677]
+mesh = SubResource("BoxMesh_ns5g1")
+surface_material_override/0 = SubResource("StandardMaterial3D_dg77c")
+
+[node name="Terrain3D" type="Terrain3D" parent="NavigationRegion3D" unique_id=675594373]
+data_directory = "res://terrain_data"
+material = SubResource("Terrain3DMaterial_efxa6")
+assets = ExtResource("4_7mycd")
+show_checkered = true
+top_level = true
+visible = false
+script = ExtResource("5_272bh")
+metadata/_edit_lock_ = true
+
+[node name="bot2" parent="." unique_id=110622926 groups=["bots"] instance=ExtResource("3_h2yge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 2, 8)
+
+[node name="bot3" parent="." unique_id=217478305 groups=["bots"] instance=ExtResource("3_h2yge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -22)
+
+[node name="bot4" parent="." unique_id=318491029 groups=["bots"] instance=ExtResource("3_h2yge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 2, 22)
+
+[node name="MatchManager" type="Node" parent="." unique_id=1981218360]
+script = ExtResource("4_1bvp3")

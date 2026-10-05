@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://d1c2b3a4e5f6g"]
+
+[ext_resource type="Script" path="res://pickup.gd" id="1_pickup"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_pickup"]
+radius = 0.85
+
+[sub_resource type="BoxMesh" id="BoxMesh_pickup"]
+size = Vector3(0.55, 0.35, 0.4)
+
+[node name="Pickup" type="Area3D" groups=["pickups"]]
+script = ExtResource("1_pickup")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_pickup")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_pickup")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+billboard = 1
+double_sided = false
+no_depth_test = true
+text = "ITEM"
+font_size = 28
+outline_size = 4
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+light_energy = 1.2
+omni_range = 3.5

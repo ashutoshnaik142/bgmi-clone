@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://dq2iek46nvno2"]
 
+[ext_resource type="Script" uid="uid://cywatp3bmiikn" path="res://hud.gd" id="1_37p78"]
+[ext_resource type="Script" path="res://minimap.gd" id="2_minimap"]
+
 [node name="HUD" type="CanvasLayer" unique_id=295532222]
+script = ExtResource("1_37p78")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1858462570]
 anchors_preset = 2
@@ -48,3 +52,54 @@ offset_transform_enabled = true
 offset_transform_position = Vector2(-50, -40)
 theme_override_font_sizes/font_size = 35
 text = "30/120"
+
+[node name="TopBar" type="HBoxContainer" parent="." unique_id=1345691593]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -53.5
+offset_right = 53.5
+offset_bottom = 40.0
+grow_horizontal = 2
+
+[node name="TimerLabel" type="Label" parent="TopBar" unique_id=1807626316]
+layout_mode = 2
+text = "05:00"
+
+[node name="AliveLabel" type="Label" parent="TopBar" unique_id=1946369407]
+layout_mode = 2
+text = "ALIVE: 4"
+
+[node name="Minimap" type="Control" parent="." unique_id=98124751]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -165.0
+offset_top = 18.0
+offset_right = -20.0
+offset_bottom = 163.0
+grow_horizontal = 0
+mouse_filter = 2
+script = ExtResource("2_minimap")
+
+[node name="EndScreen" type="PanelContainer" parent="." unique_id=1917239176]
+visible = false
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -135.0
+offset_right = 135.0
+offset_bottom = 58.0
+grow_horizontal = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="EndScreen" unique_id=251543777]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="EndScreen/VBoxContainer" unique_id=325252936]
+layout_mode = 2
+text = "WINNER WINNER CHICKEN DINNER!"
+
+[node name="RestartButton" type="Button" parent="EndScreen/VBoxContainer" unique_id=1248909764]
+layout_mode = 2
+text = "PLAY AGAIN"

@@ -1,0 +1,109 @@
+[gd_scene format=3 uid="uid://c2ewbnm5bsaa6"]
+
+[ext_resource type="Script" uid="uid://dfqvl3jsrha84" path="res://bot.gd" id="1_n8o8f"]
+[ext_resource type="PackedScene" uid="uid://cio868srj4ffu" path="res://Rifle Aiming Idle (1).fbx" id="2_mo174"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7n4ph"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_n8o8f"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ns5g1"]
+radius = 15.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_5unqy"]
+size = Vector3(0.1, 0.15, 0.7)
+
+[node name="bot" type="CharacterBody3D" unique_id=1247665696]
+script = ExtResource("1_n8o8f")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=343021460]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_7n4ph")
+
+[node name="Bodymesh" type="MeshInstance3D" parent="." unique_id=2064280326]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+visible = false
+mesh = SubResource("CapsuleMesh_n8o8f")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="." unique_id=103996774]
+path_desired_distance = 3.0
+target_desired_distance = 2.0
+max_speed = 3.5
+
+[node name="DetectionArea" type="Area3D" parent="." unique_id=49077919]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DetectionArea" unique_id=1884204535]
+shape = SubResource("SphereShape3D_ns5g1")
+
+[node name="ShootRay" type="RayCast3D" parent="." unique_id=2098034239]
+target_position = Vector3(0, -1, -50)
+
+[node name="gun" type="Node3D" parent="." unique_id=424815384]
+transform = Transform3D(0.85, 0, 0, 0, 0.83438313, -0.16218765, 0, 0.16218765, 0.83438313, 0.17, 1.43, -0.23)
+
+[node name="gunmesh" type="MeshInstance3D" parent="gun" unique_id=1458103184]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.35)
+mesh = SubResource("BoxMesh_5unqy")
+
+[node name="muzzle" type="Marker3D" parent="gun" unique_id=1915395552]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.7)
+
+[node name="Rifle Aiming Idle (1)" parent="." unique_id=725462905 instance=ExtResource("2_mo174")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="Skeleton3D" parent="Rifle Aiming Idle (1)" index="1" unique_id=1107672044]
+bones/0/position = Vector3(8.44413e-05, 0.9256548, -0.0004367453)
+bones/0/rotation = Quaternion(-0.111174054, -0.34024718, -0.027194738, 0.93334484)
+bones/1/rotation = Quaternion(0.064624384, -0.0003754132, -0.0015493903, 0.9979085)
+bones/2/rotation = Quaternion(0.100929424, 0.00021650182, -0.006601369, 0.99487174)
+bones/3/rotation = Quaternion(0.18932399, -0.0004367343, -0.006505741, 0.98189306)
+bones/4/rotation = Quaternion(0.0037089018, 0.065211646, 0.007504629, 0.99783635)
+bones/6/rotation = Quaternion(-0.040135227, 0.19219725, 0.0901438, 0.97638285)
+bones/10/rotation = Quaternion(-0.32065788, -0.3000848, 0.66161364, -0.6077788)
+bones/11/rotation = Quaternion(0.4429389, -0.22977278, 0.29741117, 0.81397563)
+bones/12/rotation = Quaternion(3.036119e-07, -1.5041539e-07, 0.53720564, 0.8434513)
+bones/13/rotation = Quaternion(-0.13655351, -0.82626015, -0.24656864, 0.48770016)
+bones/14/rotation = Quaternion(0.20734987, 0.10275172, 0.16262157, 0.9591676)
+bones/15/rotation = Quaternion(0.03076407, 0.16911246, -0.0569169, 0.983471)
+bones/16/rotation = Quaternion(-0.03695267, 0.01299973, 0.08538621, 0.9955776)
+bones/18/rotation = Quaternion(0.31663314, -0.013506531, -0.034548014, 0.9478225)
+bones/19/rotation = Quaternion(0.49949732, -4.0328567e-09, -0.050898388, 0.86481893)
+bones/20/rotation = Quaternion(0.20906821, -8.15821e-06, -0.02130535, 0.97766894)
+bones/22/rotation = Quaternion(0.44272, -0.018992709, -0.046920266, 0.8952301)
+bones/23/rotation = Quaternion(0.5358334, -4.750298e-08, -0.054210022, 0.8425816)
+bones/24/rotation = Quaternion(0.15495205, 1.2948707e-06, -0.015676433, 0.9877976)
+bones/26/rotation = Quaternion(0.5087934, -0.026804293, -0.04467427, 0.85931075)
+bones/27/rotation = Quaternion(0.5861266, 3.8313228e-08, -0.05883536, 0.80808043)
+bones/28/rotation = Quaternion(0.22268641, 4.753364e-08, -0.022353256, 0.97463393)
+bones/30/rotation = Quaternion(0.59228325, -0.072473384, -0.001180711, 0.802463)
+bones/31/rotation = Quaternion(0.52868843, 4.3404533e-08, -0.055417236, 0.847005)
+bones/32/rotation = Quaternion(0.122151904, 0.0002619646, -0.012771422, 0.99242926)
+bones/34/rotation = Quaternion(0.21488853, -0.35549402, 0.7180329, 0.5584583)
+bones/35/rotation = Quaternion(0.45821244, -0.18354528, -0.5892375, 0.6396496)
+bones/36/rotation = Quaternion(7.599203e-08, 8.915037e-08, -0.7572527, 0.6531222)
+bones/37/rotation = Quaternion(-0.16266146, 0.38776052, 0.23842561, 0.8754063)
+bones/38/rotation = Quaternion(0.32677191, -0.09885169, -0.19519892, 0.9194269)
+bones/39/rotation = Quaternion(-0.050013073, -0.1878686, 0.23348226, 0.9527278)
+bones/40/rotation = Quaternion(-0.15017554, -0.018108362, 0.46672866, 0.87136894)
+bones/42/rotation = Quaternion(0.10979633, 0.006738385, -0.012555792, 0.99385196)
+bones/43/rotation = Quaternion(0.2829638, 6.8208e-08, 0.022885358, 0.95885754)
+bones/44/rotation = Quaternion(0.2567127, 7.1838977e-06, 0.020764196, 0.9662647)
+bones/46/rotation = Quaternion(0.4344624, 0.0014156677, 0.07156689, 0.8978411)
+bones/47/rotation = Quaternion(0.81938595, -2.622387e-07, 0.06567893, 0.56946725)
+bones/48/rotation = Quaternion(0.16321684, -1.2380211e-06, 0.013082964, 0.9865035)
+bones/50/rotation = Quaternion(0.47885883, 0.03726472, 0.008018888, 0.8770641)
+bones/51/rotation = Quaternion(0.76177704, 9.229734e-08, 0.060457684, 0.6450121)
+bones/52/rotation = Quaternion(0.42503694, 3.3869128e-08, 0.0337329, 0.9045472)
+bones/54/rotation = Quaternion(0.5358723, 0.0476743, 0.008775284, 0.8429063)
+bones/55/rotation = Quaternion(0.65793544, 3.9795623e-07, 0.05512932, 0.75105375)
+bones/56/rotation = Quaternion(0.49729896, -0.00022837304, 0.04153737, 0.86658436)
+bones/58/rotation = Quaternion(0.39605767, 0.06403266, 0.90406126, -0.1473485)
+bones/59/rotation = Quaternion(-0.21767433, -0.0055154287, -0.005011247, 0.97599304)
+bones/60/rotation = Quaternion(0.31603107, -0.006316982, -0.031773888, 0.94819564)
+bones/61/rotation = Quaternion(0.4605386, -0.019904822, 0.056329656, 0.8856269)
+bones/63/rotation = Quaternion(0.046097446, -0.045845166, 0.99671286, 0.04834022)
+bones/64/rotation = Quaternion(-0.29169223, 0.0044205394, 0.008833442, 0.9564613)
+bones/65/rotation = Quaternion(0.5017606, 0.14110184, 0.032317653, 0.8528084)
+bones/66/rotation = Quaternion(0.46069583, 0.0199092, -0.05632545, 0.88554525)
+
+[editable path="Rifle Aiming Idle (1)"]
